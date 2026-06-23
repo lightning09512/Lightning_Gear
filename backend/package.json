@@ -1,0 +1,16 @@
+{
+  "name": "lightning-gear-backend",
+  "version": "1.0.0",
+  "description": "Lightning Gear E-Commerce Backend API",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "seed:admin": "node src/seeders/adminSeeder.js",
+    "seed:data": "node src/seeders/dataSeeder.js"
+  },
+  "keywords": ["ecommerce", "lightning-gear"],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
