@@ -9,7 +9,7 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://placehold.co/600x400/1a1a2e/00d4ff?text=No+Image';
+  const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://placehold.co/600x400/f5f5f5/999999?text=No+Image';
   const discount = calcDiscount(product.price, product.salePrice || 0);
 
   return (

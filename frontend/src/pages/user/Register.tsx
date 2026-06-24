@@ -44,7 +44,7 @@ const Register: React.FC = () => {
     try {
       const { data } = await api.post('/auth/register', { username, email, password, phone });
       if (data.success) {
-        toast('Đăng ký thành công! Vui lòng kiểm tra email để kích hoạt tài khoản.', 'success');
+        toast('Đăng ký thành công! Bạn có thể đăng nhập ngay.', 'success');
         navigate('/login');
       }
     } catch (error: any) {

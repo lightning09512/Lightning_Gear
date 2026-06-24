@@ -23,6 +23,9 @@ import Profile from './pages/user/Profile';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminProducts from './pages/admin/AdminProducts';
 import AdminOrders from './pages/admin/AdminOrders';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminCategories from './pages/admin/AdminCategories';
+import AdminBrands from './pages/admin/AdminBrands';
 
 // Auth Guards
 const ProtectedRoute = ({ children, requireAdmin = false }: { children: React.ReactElement, requireAdmin?: boolean }) => {
@@ -66,10 +69,9 @@ const AppRoutes = () => {
         <Route path="dashboard" element={<AdminDashboard />} />
         <Route path="products" element={<AdminProducts />} />
         <Route path="orders" element={<AdminOrders />} />
-        {/* Placeholders for others */}
-        <Route path="users" element={<div>Users (Coming Soon)</div>} />
-        <Route path="categories" element={<div>Categories (Coming Soon)</div>} />
-        <Route path="brands" element={<div>Brands (Coming Soon)</div>} />
+        <Route path="users" element={<AdminUsers />} />
+        <Route path="categories" element={<AdminCategories />} />
+        <Route path="brands" element={<AdminBrands />} />
       </Route>
 
       {/* 404 */}

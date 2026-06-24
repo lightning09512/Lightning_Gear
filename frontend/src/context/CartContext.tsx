@@ -34,6 +34,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (user && user.role === 'user' && token) {
       fetchCart();
+      syncCart();
     } else {
       setItems([]);
     }

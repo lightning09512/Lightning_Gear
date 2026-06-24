@@ -113,8 +113,14 @@ const searchProducts = async (req, res) => {
  */
 const getProductBySlug = async (req, res) => {
   try {
+    const param = req.params.slug;
+    const isNumeric = /^\d+$/.test(param);
+    const queryWhere = isNumeric 
+      ? { [Op.or]: [{ id: parseInt(param) }, { slug: param }], isActive: true }
+      : { slug: param, isActive: true };
+
     const product = await Product.findOne({
-      where: { slug: req.params.slug, isActive: true },
+      where: queryWhere,
       include: [
         { model: ProductImage, as: 'images' },
         { model: ProductSpec, as: 'specs' },
@@ -218,19 +224,30 @@ const getProductsByCategory = async (req, res) => {
  */
 const getFeaturedProducts = async (req, res) => {
   try {
-    const [newest, categories] = await Promise.all([
-      // Newest 8 products
-      Product.findAll({
-        where: { isActive: true },
+    const getProductsByCategorySlug = async (slug, limit = 8) => {
+      const category = await Category.findOne({ where: { slug } });
+      if (!category) return [];
+      
+      const subCategories = await Category.findAll({ where: { parentId: category.id } });
+      const categoryIds = [category.id, ...subCategories.map(c => c.id)];
+      
+      return Product.findAll({
+        where: { isActive: true, categoryId: { [Op.in]: categoryIds } },
         include: [
           { model: ProductImage, as: 'images', attributes: ['id', 'imageUrl', 'isPrimary'] },
           { model: Category, attributes: ['id', 'name', 'slug'] },
           { model: Brand, attributes: ['id', 'name'] },
         ],
         order: [['createdAt', 'DESC']],
-        limit: 8,
-      }),
-      // All categories
+        limit,
+      });
+    };
+
+    const [pcGaming, linhKien, manHinh, laptop, categories] = await Promise.all([
+      getProductsByCategorySlug('pc-gaming', 8),
+      getProductsByCategorySlug('linh-kien', 8),
+      getProductsByCategorySlug('man-hinh', 8),
+      getProductsByCategorySlug('laptop', 8),
       Category.findAll({
         where: { parentId: null },
         include: [{ model: Category, as: 'children' }],
@@ -240,7 +257,7 @@ const getFeaturedProducts = async (req, res) => {
 
     res.json({
       success: true,
-      data: { newest, categories },
+      data: { pcGaming, linhKien, manHinh, laptop, categories },
     });
   } catch (error) {
     console.error('Get featured error:', error);
@@ -255,7 +272,7 @@ const getFeaturedProducts = async (req, res) => {
  */
 const createProduct = async (req, res) => {
   try {
-    const { name, description, price, salePrice, stock, categoryId, brandId, specs } = req.body;
+    const { name, description, price, salePrice, stock, categoryId, brandId, specs, imageUrl } = req.body;
 
     if (!name || !price) {
       return res.status(400).json({ success: false, message: 'Tên và giá sản phẩm là bắt buộc' });
@@ -289,6 +306,12 @@ const createProduct = async (req, res) => {
         isPrimary: index === 0,
       }));
       await ProductImage.bulkCreate(imageRecords);
+    } else if (imageUrl) {
+      await ProductImage.create({
+        productId: product.id,
+        imageUrl,
+        isPrimary: true,
+      });
     }
 
     // Handle specs
@@ -335,7 +358,7 @@ const updateProduct = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Sản phẩm không tồn tại' });
     }
 
-    const { name, description, price, salePrice, stock, categoryId, brandId, specs } = req.body;
+    const { name, description, price, salePrice, stock, categoryId, brandId, specs, imageUrl } = req.body;
 
     // Update slug if name changed
     let slug = product.slug;
@@ -368,6 +391,17 @@ const updateProduct = async (req, res) => {
         isPrimary: false,
       }));
       await ProductImage.bulkCreate(imageRecords);
+    } else if (imageUrl) {
+      const primaryImage = await ProductImage.findOne({ where: { productId: product.id, isPrimary: true } });
+      if (primaryImage) {
+        await primaryImage.update({ imageUrl });
+      } else {
+        await ProductImage.create({
+          productId: product.id,
+          imageUrl,
+          isPrimary: true,
+        });
+      }
     }
 
     // Handle specs update

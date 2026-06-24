@@ -1,195 +1,225 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { MdShoppingCart, MdLocalShipping, MdSecurity, MdAssignmentReturn, MdCardGiftcard, MdPhone, MdCreditCard } from 'react-icons/md';
 import api from '../../services/api';
 import { Product } from '../../types';
-import { formatPrice, calcDiscount } from '../../utils/formatPrice';
 import { useCart } from '../../context/CartContext';
-import { useToast } from '../../components/Toast';
-import StarRating from '../../components/StarRating';
-import Button from '../../components/Button';
-import LoadingSpinner from '../../components/LoadingSpinner';
-import { MdShoppingCart, MdLocalShipping, MdSecurity } from 'react-icons/md';
 
 const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeImage, setActiveImage] = useState<string>('');
-  const [quantity, setQuantity] = useState(1);
-  const [addingToCart, setAddingToCart] = useState(false);
-
   const { addToCart } = useCart();
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [cartModal, setCartModal] = useState<{ visible: boolean; status: 'loading' | 'success' }>({
+    visible: false,
+    status: 'loading'
+  });
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const { data } = await api.get(`/products/${slug}`);
-        if (data.success) {
-          setProduct(data.data);
-          const primaryImg = data.data.images?.find((img: any) => img.isPrimary)?.imageUrl || data.data.images?.[0]?.imageUrl;
-          if (primaryImg) setActiveImage(primaryImg);
+        const response = await api.get(`/products/${slug}`);
+        if (response.data.success) {
+          setProduct(response.data.data);
+        } else {
+          setProduct(null);
         }
       } catch (error) {
-        toast('Sản phẩm không tồn tại', 'error');
-        navigate('/products');
+        console.error('Lỗi khi tải chi tiết sản phẩm:', error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProduct();
-  }, [slug, navigate, toast]);
+    window.scrollTo(0, 0);
+  }, [slug]);
 
-  const handleAddToCart = async (buyNow = false) => {
-    if (!product) return;
-    setAddingToCart(true);
+  if (loading) {
+    return (
+      <div className="container py-2xl text-center">
+        <div className="spinner"></div>
+        <p className="mt-md text-secondary">Đang tải thông tin sản phẩm...</p>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="container py-2xl text-center">
+        <h2>Không tìm thấy sản phẩm!</h2>
+        <Link to="/products" className="btn btn-primary mt-md">Quay lại danh sách</Link>
+      </div>
+    );
+  }
+
+  const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://placehold.co/600x600?text=No+Image';
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+  };
+
+  const handleAddToCart = async () => {
     try {
-      await addToCart(product.id, quantity);
-      toast('Đã thêm vào giỏ hàng', 'success');
-      if (buyNow) navigate('/checkout');
-    } catch (error: any) {
-      toast(error, 'error');
-    } finally {
-      setAddingToCart(false);
+      setCartModal({ visible: true, status: 'loading' });
+      await addToCart(product.id, 1);
+      setTimeout(() => {
+        setCartModal({ visible: true, status: 'success' });
+        setTimeout(() => {
+          setCartModal({ visible: false, status: 'loading' });
+        }, 1500);
+      }, 600);
+    } catch (error) {
+      console.error(error);
+      setCartModal({ visible: false, status: 'loading' });
+      alert('Không thể thêm sản phẩm vào giỏ hàng.');
     }
   };
 
-  const handleQtyChange = (type: 'inc' | 'dec') => {
-    if (type === 'inc' && quantity < (product?.stock || 0)) {
-      setQuantity(q => q + 1);
-    } else if (type === 'dec' && quantity > 1) {
-      setQuantity(q => q - 1);
+  const handleBuyNow = async () => {
+    try {
+      setCartModal({ visible: true, status: 'loading' });
+      await addToCart(product.id, 1);
+      setCartModal({ visible: true, status: 'success' });
+      setTimeout(() => {
+        setCartModal({ visible: false, status: 'loading' });
+        navigate('/cart');
+      }, 800);
+    } catch (error) {
+      console.error(error);
+      setCartModal({ visible: false, status: 'loading' });
+      alert('Không thể thêm sản phẩm vào giỏ hàng.');
     }
   };
-
-  if (loading) return <LoadingSpinner fullScreen />;
-  if (!product) return null;
-
-  const discount = calcDiscount(product.price, product.salePrice || 0);
 
   return (
     <div className="container py-xl">
-      <div className="product-detail-layout">
-        {/* Images */}
-        <div className="image-gallery">
-          <img src={activeImage} alt={product.name} className="main-image" />
-          {product.images && product.images.length > 1 && (
-            <div className="thumbnail-list">
-              {product.images.map(img => (
-                <img
-                  key={img.id}
-                  src={img.imageUrl}
-                  alt={product.name}
-                  className={`thumbnail ${activeImage === img.imageUrl ? 'active' : ''}`}
-                  onClick={() => setActiveImage(img.imageUrl)}
-                />
-              ))}
-            </div>
-          )}
+      {/* Breadcrumb */}
+      <div className="breadcrumb">
+        <Link to="/">Trang chủ</Link>
+        <span>/</span>
+        <Link to="/products">Sản phẩm</Link>
+        <span>/</span>
+        <span className="text-primary font-medium truncate">{product.name}</span>
+      </div>
+
+      <div className="card product-detail-container mb-xl">
+        {/* Left Column: Image */}
+        <div className="product-image-gallery">
+          <div className="product-image-main">
+            <img src={primaryImage} alt={product.name} className="w-full h-auto rounded-sm" />
+          </div>
         </div>
 
-        {/* Info */}
-        <div>
-          {product.Brand && <div className="text-accent font-bold mb-xs">{product.Brand.name}</div>}
-          <h1 className="text-lg font-bold mb-sm">{product.name}</h1>
+        {/* Right Column: Info */}
+        <div className="product-info">
+          <h1 className="text-2xl font-bold mb-md text-heading leading-tight">{product.name}</h1>
           
-          <div className="flex items-center gap-md mb-lg border-bottom pb-md" style={{ borderColor: 'var(--border-color)' }}>
-            <div className="flex items-center gap-xs">
-              <StarRating rating={product.avgRating || 0} readonly />
-              <span className="text-muted text-sm">({product.totalReviews || 0} đánh giá)</span>
-            </div>
-            <div className="text-muted">|</div>
-            <div className="text-sm">
-              Tình trạng: <span className={product.stock > 0 ? 'text-success' : 'text-danger'}>
-                {product.stock > 0 ? `Còn hàng (${product.stock})` : 'Hết hàng'}
-              </span>
-            </div>
+          <div className="product-meta">
+            <span>Mã SP: <strong>{product.id || 'Đang cập nhật'}</strong></span>
+            <span>Tình trạng: <strong>{product.stock > 0 ? 'Còn hàng' : 'Hết hàng'}</strong></span>
+            <span>Bảo hành: <strong>36 Tháng</strong></span>
           </div>
 
-          <div className="mb-xl">
+          <div className="price-group mb-lg flex items-end gap-md">
             {product.salePrice ? (
-              <div className="flex items-end gap-md">
-                <span className="price" style={{ fontSize: '2rem' }}>{formatPrice(product.salePrice)}</span>
-                <span className="price-old pb-xs">{formatPrice(product.price)}</span>
-                <span className="sale-badge mb-xs">-{discount}%</span>
-              </div>
+              <>
+                <span className="price-sale text-3xl font-bold text-primary">{formatCurrency(product.salePrice)}</span>
+                {product.price > product.salePrice && (
+                  <span className="price-original text-lg text-secondary line-through mb-1">{formatCurrency(product.price)}</span>
+                )}
+              </>
             ) : (
-              <span className="price" style={{ fontSize: '2rem' }}>{formatPrice(product.price)}</span>
+              <span className="price-sale text-3xl font-bold text-primary">{formatCurrency(product.price)}</span>
             )}
           </div>
 
-          {/* Quantity & Actions */}
-          <div className="flex items-center gap-lg mb-xl">
-            <div className="qty-selector">
-              <button className="qty-btn" onClick={() => handleQtyChange('dec')}>-</button>
-              <input type="text" className="qty-value" value={quantity} readOnly />
-              <button className="qty-btn" onClick={() => handleQtyChange('inc')}>+</button>
+          {/* Promotional Box */}
+          <div className="promo-box">
+            <div className="promo-header">
+              <MdCardGiftcard size={20} />
+              KHUYẾN MÃI - QUÀ TẶNG
             </div>
-            
-            <Button 
-              className="flex-1" 
-              size="lg" 
-              onClick={() => handleAddToCart(false)}
-              disabled={product.stock === 0}
-              isLoading={addingToCart}
-            >
-              <MdShoppingCart size={20} /> Thêm vào giỏ
-            </Button>
-            <Button 
-              variant="secondary" 
-              size="lg" 
-              className="flex-1"
-              onClick={() => handleAddToCart(true)}
-              disabled={product.stock === 0}
-            >
-              Mua ngay
-            </Button>
-          </div>
-
-          {/* Benefits */}
-          <div className="card card-glass mb-xl">
-            <div className="flex items-center gap-md mb-md">
-              <MdLocalShipping size={24} className="text-accent" />
-              <div>
-                <div className="font-bold text-sm">Giao hàng miễn phí</div>
-                <div className="text-muted text-xs">Cho đơn hàng trên 1.000.000đ</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-md">
-              <MdSecurity size={24} className="text-success" />
-              <div>
-                <div className="font-bold text-sm">Bảo hành chính hãng</div>
-                <div className="text-muted text-xs">Cam kết 100% chính hãng, bảo hành toàn quốc</div>
-              </div>
+            <div className="promo-body">
+              <ul>
+                <li>Sản phẩm đã được áp dụng chương trình khuyến mãi giảm giá Shock.</li>
+                <li>Tặng kèm lót chuột Gaming Size XL trị giá 150.000đ.</li>
+                <li>Hỗ trợ cài đặt hệ điều hành và phần mềm miễn phí trọn đời.</li>
+                <li>Miễn phí vận chuyển toàn quốc cho đơn hàng PC.</li>
+              </ul>
             </div>
           </div>
 
-          {/* Description & Specs */}
-          <div className="mt-xl">
-            <h3 className="filter-title border-bottom pb-sm mb-md" style={{ borderColor: 'var(--border-color)' }}>Mô tả sản phẩm</h3>
-            <p className="text-secondary" style={{ lineHeight: 1.8 }}>{product.description}</p>
+          {/* Actions */}
+          <button className="btn-buy-now" onClick={handleBuyNow}>
+            <strong>MUA NGAY</strong>
+            <span>Giao hàng tận nơi hoặc nhận tại cửa hàng</span>
+          </button>
+
+          <div className="action-buttons">
+            <button className="btn-outline-primary" onClick={handleAddToCart}>
+              <MdShoppingCart size={18} />
+              THÊM VÀO GIỎ
+            </button>
+            <button className="btn-outline-primary" onClick={() => alert('Tính năng đang phát triển')}>
+              <MdCreditCard size={18} />
+              MUA TRẢ GÓP
+            </button>
           </div>
 
-          {product.specs && product.specs.length > 0 && (
-            <div className="mt-xl">
-              <h3 className="filter-title border-bottom pb-sm mb-md" style={{ borderColor: 'var(--border-color)' }}>Thông số kỹ thuật</h3>
-              <table className="specs-table">
-                <tbody>
-                  {product.specs.map(spec => (
-                    <tr key={spec.id}>
-                      <td>{spec.specKey}</td>
-                      <td>{spec.specValue}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {/* Trust Policies */}
+          <div className="policy-list mt-md">
+            <div className="policy-item">
+              <MdLocalShipping className="policy-icon" />
+              <span><strong>Giao hàng siêu tốc</strong> trong 2h nội thành</span>
             </div>
-          )}
-
+            <div className="policy-item">
+              <MdSecurity className="policy-icon" />
+              <span><strong>Cam kết 100%</strong> hàng chính hãng, mới nguyên seal</span>
+            </div>
+            <div className="policy-item">
+              <MdAssignmentReturn className="policy-icon" />
+              <span><strong>Đổi trả 30 ngày</strong> nếu có lỗi từ nhà sản xuất</span>
+            </div>
+            <div className="policy-item">
+              <MdPhone className="policy-icon" />
+              <span><strong>Hỗ trợ kỹ thuật 24/7:</strong> 032.6694.168</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* Description Section */}
+      <div className="card mt-xl">
+        <h3 className="filter-title border-bottom pb-sm mb-lg text-xl uppercase" style={{ borderColor: 'var(--border-color)' }}>
+          Đặc điểm nổi bật & Thông số kỹ thuật
+        </h3>
+        
+        {/* Render HTML content safely */}
+        <div 
+          className="html-content" 
+          dangerouslySetInnerHTML={{ __html: product.description || '<p>Đang cập nhật mô tả...</p>' }} 
+        />
+      </div>
+
+      {/* Success/Loading Modal */}
+      {cartModal.visible && (
+        <div className="cart-modal-overlay">
+          <div className="cart-modal-content">
+            {cartModal.status === 'loading' ? (
+              <div className="cart-modal-spinner"></div>
+            ) : (
+              <div className="cart-modal-success-icon">✓</div>
+            )}
+            <p className="cart-modal-text">
+              {cartModal.status === 'loading'
+                ? 'Đang thêm vào giỏ hàng...'
+                : 'Thêm sản phẩm vào giỏ hàng thành công!'}
+            </p>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

@@ -159,7 +159,7 @@ const ProductList: React.FC = () => {
             <LoadingSpinner />
           ) : products.length > 0 ? (
             <>
-              <div className="grid grid-3">
+              <div className="grid grid-4">
                 {products.map(product => (
                   <ProductCard key={product.id} product={product} />
                 ))}

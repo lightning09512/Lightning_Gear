@@ -43,6 +43,7 @@ const register = async (req, res) => {
       address: address || null,
       verifyToken,
       verifyTokenExpiry,
+      isVerified: true,
     });
 
     // Send verification email
@@ -54,7 +55,7 @@ const register = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Đăng ký thành công! Vui lòng kiểm tra email để xác nhận tài khoản.',
+      message: 'Đăng ký thành công! Bạn có thể đăng nhập ngay.',
       data: { id: user.id, email: user.email },
     });
   } catch (error) {

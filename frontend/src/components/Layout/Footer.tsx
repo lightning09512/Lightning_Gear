@@ -1,51 +1,103 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { MdLocationOn, MdPhone, MdEmail, MdCheckCircle } from 'react-icons/md';
 
 const Footer: React.FC = () => {
   return (
     <footer className="footer">
-      <div className="footer-grid">
-        <div className="footer-brand">
-          <Link to="/" className="logo">
-            <span className="bolt">⚡</span>
-            <span>Lightning Gear</span>
-          </Link>
-          <p>
-            Chuyên cung cấp PC Gaming, Laptop, linh kiện và phụ kiện máy tính chính hãng với giá tốt nhất thị trường.
-          </p>
-        </div>
-
-        <div>
-          <h4 className="footer-heading">Sản phẩm</h4>
-          <div className="footer-links">
-            <Link to="/category/pc-gaming" className="footer-link">PC Gaming</Link>
-            <Link to="/category/laptop" className="footer-link">Laptop</Link>
-            <Link to="/category/linh-kien" className="footer-link">Linh kiện máy tính</Link>
-            <Link to="/category/man-hinh" className="footer-link">Màn hình</Link>
-          </div>
-        </div>
-
-        <div>
-          <h4 className="footer-heading">Hỗ trợ</h4>
-          <div className="footer-links">
-            <Link to="#" className="footer-link">Hướng dẫn mua hàng</Link>
-            <Link to="#" className="footer-link">Chính sách bảo hành</Link>
-            <Link to="#" className="footer-link">Chính sách đổi trả</Link>
-            <Link to="#" className="footer-link">Tra cứu đơn hàng</Link>
-          </div>
-        </div>
-
-        <div>
-          <h4 className="footer-heading">Liên hệ</h4>
-          <div className="footer-links">
-            <a href="tel:1900xxxx" className="footer-link">Hotline: 1900 xxxx</a>
-            <a href="mailto:support@lightninggear.com" className="footer-link">Email: support@lightninggear.com</a>
-            <p className="footer-link">Địa chỉ: 123 Đường Công Nghệ, Quận 1, TP.HCM</p>
+      {/* Trust Badges Section */}
+      <div className="footer-trust">
+        <div className="container">
+          <div className="trust-grid">
+            <div className="trust-item">
+              <MdCheckCircle size={32} className="trust-icon" />
+              <div>
+                <h4>Sản phẩm chính hãng</h4>
+                <p>Cam kết 100% chính hãng</p>
+              </div>
+            </div>
+            <div className="trust-item">
+              <MdCheckCircle size={32} className="trust-icon" />
+              <div>
+                <h4>Bảo hành tận nơi</h4>
+                <p>Bảo hành uy tín, nhanh chóng</p>
+              </div>
+            </div>
+            <div className="trust-item">
+              <MdCheckCircle size={32} className="trust-icon" />
+              <div>
+                <h4>Giao hàng siêu tốc</h4>
+                <p>Giao hàng nhanh toàn quốc</p>
+              </div>
+            </div>
+            <div className="trust-item">
+              <MdCheckCircle size={32} className="trust-icon" />
+              <div>
+                <h4>Hỗ trợ 24/7</h4>
+                <p>Tư vấn nhiệt tình, chu đáo</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <div className="footer-main">
+        <div className="container">
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <Link to="/" className="logo" style={{ color: '#fff' }}>
+                <span className="bolt">⚡</span>
+                <span>Lightning Gear</span>
+              </Link>
+              <p style={{ marginTop: '16px' }}>
+                Lightning Gear - Điểm đến tin cậy cho những tín đồ công nghệ, chuyên cung cấp PC Gaming, Laptop, linh kiện và phụ kiện máy tính chính hãng với giá tốt nhất thị trường.
+              </p>
+              <div className="contact-info mt-lg">
+                <p><MdLocationOn /> 123 Đường Công Nghệ, Quận 1, TP.HCM</p>
+                <p><MdPhone /> 098.655.2233</p>
+                <p><MdEmail /> support@lightninggear.com</p>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="footer-heading">Sản phẩm</h4>
+              <div className="footer-links">
+                <Link to="/category/pc-gaming" className="footer-link">PC Gaming</Link>
+                <Link to="/category/laptop" className="footer-link">Laptop</Link>
+                <Link to="/category/linh-kien" className="footer-link">Linh kiện máy tính</Link>
+                <Link to="/category/man-hinh" className="footer-link">Màn hình</Link>
+                <Link to="/category/phu-kien" className="footer-link">Gaming Gear</Link>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="footer-heading">Chính sách</h4>
+              <div className="footer-links">
+                <Link to="#" className="footer-link">Chính sách bảo hành</Link>
+                <Link to="#" className="footer-link">Chính sách đổi trả</Link>
+                <Link to="#" className="footer-link">Chính sách giao hàng</Link>
+                <Link to="#" className="footer-link">Chính sách bảo mật</Link>
+                <Link to="#" className="footer-link">Điều khoản sử dụng</Link>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="footer-heading">Hỗ trợ khách hàng</h4>
+              <div className="footer-links">
+                <Link to="#" className="footer-link">Hướng dẫn mua hàng trực tuyến</Link>
+                <Link to="#" className="footer-link">Hướng dẫn thanh toán</Link>
+                <Link to="#" className="footer-link">Hướng dẫn mua trả góp</Link>
+                <Link to="#" className="footer-link">Góp ý, Khiếu nại</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Lightning Gear. All rights reserved.</p>
+        <div className="container">
+          <p>&copy; {new Date().getFullYear()} Lightning Gear. All rights reserved. Designed for TTG Shop Style.</p>
+        </div>
       </div>
     </footer>
   );
