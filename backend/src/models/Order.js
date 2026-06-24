@@ -25,7 +25,7 @@ const Order = sequelize.define('Order', {
     defaultValue: 'pending',
   },
   paymentMethod: {
-    type: DataTypes.ENUM('cod', 'bank_transfer'),
+    type: DataTypes.ENUM('cod', 'bank_transfer', 'momo', 'vnpay', 'zalopay', 'credit_card', 'installment'),
     allowNull: false,
     defaultValue: 'cod',
   },

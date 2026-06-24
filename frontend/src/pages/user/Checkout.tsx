@@ -132,6 +132,7 @@ const Checkout: React.FC = () => {
 
           <h3 className="filter-title border-bottom pb-sm mb-md">Phương thức thanh toán</h3>
           <div className="flex flex-col gap-sm">
+            {/* COD */}
             <label className="flex items-center gap-sm p-sm border-radius-md" style={{ background: formData.paymentMethod === 'cod' ? 'var(--bg-card-hover)' : 'transparent', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
               <input 
                 type="radio" 
@@ -140,8 +141,14 @@ const Checkout: React.FC = () => {
                 checked={formData.paymentMethod === 'cod'} 
                 onChange={handleChange}
               />
-              <span className="font-bold">Thanh toán khi nhận hàng (COD)</span>
+              <span style={{ fontSize: '1.2rem' }}>💵</span>
+              <div style={{ flex: 1 }}>
+                <span className="font-bold block">Thanh toán khi nhận hàng (COD)</span>
+                <span className="text-xs text-muted block">Nhận hàng, kiểm tra rồi mới thanh toán tiền mặt</span>
+              </div>
             </label>
+
+            {/* Bank Transfer */}
             <label className="flex items-center gap-sm p-sm border-radius-md" style={{ background: formData.paymentMethod === 'bank_transfer' ? 'var(--bg-card-hover)' : 'transparent', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
               <input 
                 type="radio" 
@@ -150,11 +157,110 @@ const Checkout: React.FC = () => {
                 checked={formData.paymentMethod === 'bank_transfer'} 
                 onChange={handleChange}
               />
-              <span className="font-bold">Chuyển khoản qua ngân hàng</span>
+              <span style={{ fontSize: '1.2rem' }}>🏦</span>
+              <div style={{ flex: 1 }}>
+                <span className="font-bold block">Chuyển khoản qua ngân hàng (QR Code 24/7)</span>
+                <span className="text-xs text-muted block">Quét mã QR chuyển khoản nhanh 24/7 tiện lợi</span>
+              </div>
             </label>
+
+            {/* MoMo */}
+            <label className="flex items-center gap-sm p-sm border-radius-md" style={{ background: formData.paymentMethod === 'momo' ? 'var(--bg-card-hover)' : 'transparent', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
+              <input 
+                type="radio" 
+                name="paymentMethod" 
+                value="momo" 
+                checked={formData.paymentMethod === 'momo'} 
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '1.2rem' }}>🌸</span>
+              <div style={{ flex: 1 }}>
+                <span className="font-bold block">Thanh toán qua ví MoMo</span>
+                <span className="text-xs text-muted block">Thanh toán trực tiếp bằng ứng dụng MoMo</span>
+              </div>
+            </label>
+
+            {/* ZaloPay */}
+            <label className="flex items-center gap-sm p-sm border-radius-md" style={{ background: formData.paymentMethod === 'zalopay' ? 'var(--bg-card-hover)' : 'transparent', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
+              <input 
+                type="radio" 
+                name="paymentMethod" 
+                value="zalopay" 
+                checked={formData.paymentMethod === 'zalopay'} 
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '1.2rem' }}>📱</span>
+              <div style={{ flex: 1 }}>
+                <span className="font-bold block">Thanh toán qua ví ZaloPay</span>
+                <span className="text-xs text-muted block">Thanh toán an toàn, bảo mật qua ZaloPay</span>
+              </div>
+            </label>
+
+            {/* VNPay */}
+            <label className="flex items-center gap-sm p-sm border-radius-md" style={{ background: formData.paymentMethod === 'vnpay' ? 'var(--bg-card-hover)' : 'transparent', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
+              <input 
+                type="radio" 
+                name="paymentMethod" 
+                value="vnpay" 
+                checked={formData.paymentMethod === 'vnpay'} 
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '1.2rem' }}>💳</span>
+              <div style={{ flex: 1 }}>
+                <span className="font-bold block">Cổng thanh toán VNPay-QR</span>
+                <span className="text-xs text-muted block">Quét QR từ hơn 40 ứng dụng ngân hàng và Ví điện tử</span>
+              </div>
+            </label>
+
+            {/* Credit Card */}
+            <label className="flex items-center gap-sm p-sm border-radius-md" style={{ background: formData.paymentMethod === 'credit_card' ? 'var(--bg-card-hover)' : 'transparent', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
+              <input 
+                type="radio" 
+                name="paymentMethod" 
+                value="credit_card" 
+                checked={formData.paymentMethod === 'credit_card'} 
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '1.2rem' }}>🌐</span>
+              <div style={{ flex: 1 }}>
+                <span className="font-bold block">Thẻ tín dụng quốc tế (Visa, Mastercard, JCB)</span>
+                <span className="text-xs text-muted block">Hỗ trợ các thẻ phát hành trong nước và quốc tế</span>
+              </div>
+            </label>
+
+            {/* Installment */}
+            <label className="flex items-center gap-sm p-sm border-radius-md" style={{ background: formData.paymentMethod === 'installment' ? 'var(--bg-card-hover)' : 'transparent', border: '1px solid var(--border-color)', cursor: 'pointer' }}>
+              <input 
+                type="radio" 
+                name="paymentMethod" 
+                value="installment" 
+                checked={formData.paymentMethod === 'installment'} 
+                onChange={handleChange}
+              />
+              <span style={{ fontSize: '1.2rem' }}>📈</span>
+              <div style={{ flex: 1 }}>
+                <span className="font-bold block">Trả góp 0% lãi suất qua thẻ tín dụng</span>
+                <span className="text-xs text-muted block">Kỳ hạn trả góp linh hoạt từ 3 đến 12 tháng</span>
+              </div>
+            </label>
+
+            {/* Bank Transfer Details */}
             {formData.paymentMethod === 'bank_transfer' && (
-              <div className="p-md bg-secondary text-sm border-radius-md mt-xs text-muted">
-                Thông tin tài khoản sẽ được hiển thị sau khi bạn đặt hàng thành công.
+              <div className="p-md text-sm mt-xs text-muted" style={{ background: 'var(--bg-primary, #f9f9f9)', border: '1px dashed var(--accent-primary)', borderRadius: '8px', padding: '12px' }}>
+                <div className="font-bold text-accent mb-xs">Thông tin tài khoản ngân hàng:</div>
+                <div>Ngân hàng: <strong>MB Bank (Ngân hàng Quân Đội)</strong></div>
+                <div>Số tài khoản: <strong>0986552233</strong></div>
+                <div>Chủ tài khoản: <strong>LIGHTNING GEAR</strong></div>
+                <div>Nội dung chuyển khoản: <strong>LG [Mã đơn hàng]</strong></div>
+                <div className="text-xs text-muted mt-sm">* Đơn hàng sẽ được xử lý ngay sau khi hệ thống nhận được chuyển khoản thành công.</div>
+              </div>
+            )}
+
+            {/* Online payment instructions */}
+            {(formData.paymentMethod === 'momo' || formData.paymentMethod === 'zalopay' || formData.paymentMethod === 'vnpay' || formData.paymentMethod === 'credit_card' || formData.paymentMethod === 'installment') && (
+              <div className="p-md text-sm mt-xs text-muted" style={{ background: 'var(--bg-primary, #f9f9f9)', border: '1px dashed var(--accent-primary)', borderRadius: '8px', padding: '12px' }}>
+                <div className="font-bold text-accent mb-xs">Cổng thanh toán trực tuyến:</div>
+                <div>Cổng thanh toán đang hoạt động ở chế độ Sandbox (Thử nghiệm). Sau khi nhấn "Hoàn tất đặt hàng", giao dịch sẽ được ghi nhận thành công tự động.</div>
               </div>
             )}
           </div>
