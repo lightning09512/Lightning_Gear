@@ -125,7 +125,7 @@ export interface Order {
   userId: number;
   totalAmount: number;
   status: OrderStatus;
-  paymentMethod: 'cod' | 'bank_transfer';
+  paymentMethod: 'cod' | 'bank_transfer' | 'momo' | 'vnpay' | 'zalopay' | 'credit_card' | 'installment';
   shippingAddress: ShippingAddress;
   note: string | null;
   items: OrderItem[];

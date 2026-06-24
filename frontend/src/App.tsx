@@ -18,6 +18,7 @@ import Cart from './pages/user/Cart';
 import Checkout from './pages/user/Checkout';
 import Orders from './pages/user/Orders';
 import Profile from './pages/user/Profile';
+import BuildPC from './pages/user/BuildPC';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -56,6 +57,7 @@ const AppRoutes = () => {
         <Route path="category/:slug" element={<ProductList />} />
         <Route path="products/:slug" element={<ProductDetail />} />
         <Route path="cart" element={<Cart />} />
+        <Route path="buildpc" element={<BuildPC />} />
         
         {/* Protected User Routes */}
         <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />

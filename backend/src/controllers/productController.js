@@ -12,9 +12,13 @@ const getAllProducts = async (req, res) => {
       limit = 12,
       categoryId,
       brandId,
+      brands,
       priceMin,
+      minPrice,
       priceMax,
+      maxPrice,
       search,
+      q,
       sort = 'newest',
     } = req.query;
 
@@ -22,28 +26,68 @@ const getAllProducts = async (req, res) => {
     const where = { isActive: true };
 
     // Filters
-    if (categoryId) where.categoryId = categoryId;
-    if (brandId) where.brandId = brandId;
-    if (priceMin || priceMax) {
-      where.price = {};
-      if (priceMin) where.price[Op.gte] = parseInt(priceMin);
-      if (priceMax) where.price[Op.lte] = parseInt(priceMax);
+    if (categoryId) {
+      if (Array.isArray(categoryId)) {
+        where.categoryId = { [Op.in]: categoryId };
+      } else {
+        where.categoryId = categoryId;
+      }
     }
-    if (search) {
+
+    // Brand filter (support multiple brands comma-separated or brandId)
+    const rawBrands = brands || brandId;
+    if (rawBrands) {
+      if (typeof rawBrands === 'string') {
+        const brandIds = rawBrands.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+        if (brandIds.length > 0) {
+          where.brandId = { [Op.in]: brandIds };
+        }
+      } else if (Array.isArray(rawBrands)) {
+        where.brandId = { [Op.in]: rawBrands };
+      } else {
+        where.brandId = rawBrands;
+      }
+    }
+
+    // Price range filters
+    const finalMinPrice = parseInt(priceMin || minPrice);
+    const finalMaxPrice = parseInt(priceMax || maxPrice);
+    if (!isNaN(finalMinPrice) || !isNaN(finalMaxPrice)) {
+      where.price = {};
+      if (!isNaN(finalMinPrice)) where.price[Op.gte] = finalMinPrice;
+      if (!isNaN(finalMaxPrice)) where.price[Op.lte] = finalMaxPrice;
+    }
+
+    // Search query
+    const finalSearch = search || q;
+    if (finalSearch) {
       where[Op.or] = [
-        { name: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `%${search}%` } },
+        { name: { [Op.like]: `%${finalSearch}%` } },
+        { description: { [Op.like]: `%${finalSearch}%` } },
       ];
     }
 
-    // Sort
+    // Sort order
     let order;
     switch (sort) {
-      case 'price_asc': order = [['price', 'ASC']]; break;
-      case 'price_desc': order = [['price', 'DESC']]; break;
-      case 'best_selling': order = [['id', 'DESC']]; break; // Simplified; could use sales count
-      case 'oldest': order = [['createdAt', 'ASC']]; break;
-      default: order = [['createdAt', 'DESC']]; // newest
+      case 'price_asc':
+      case 'price:ASC':
+        order = [['price', 'ASC']];
+        break;
+      case 'price_desc':
+      case 'price:DESC':
+        order = [['price', 'DESC']];
+        break;
+      case 'best_selling':
+        order = [['id', 'DESC']];
+        break;
+      case 'oldest':
+        order = [['createdAt', 'ASC']];
+        break;
+      case 'createdAt:DESC':
+      default:
+        order = [['createdAt', 'DESC']];
+        break;
     }
 
     const { count, rows } = await Product.findAndCountAll({
@@ -175,20 +219,84 @@ const getProductsByCategory = async (req, res) => {
     const subCategories = await Category.findAll({ where: { parentId: category.id } });
     const categoryIds = [category.id, ...subCategories.map(c => c.id)];
 
-    req.query.categoryId = categoryIds;
-    // Reuse getAllProducts logic but with array of category IDs
-    const { page = 1, limit = 12, sort = 'newest' } = req.query;
-    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const {
+      page = 1,
+      limit = 12,
+      brands,
+      brandId,
+      priceMin,
+      minPrice,
+      priceMax,
+      maxPrice,
+      search,
+      q,
+      sort = 'newest',
+    } = req.query;
 
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+    const where = { 
+      isActive: true, 
+      categoryId: { [Op.in]: categoryIds } 
+    };
+
+    // Brand filter
+    const rawBrands = brands || brandId;
+    if (rawBrands) {
+      if (typeof rawBrands === 'string') {
+        const brandIds = rawBrands.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+        if (brandIds.length > 0) {
+          where.brandId = { [Op.in]: brandIds };
+        }
+      } else if (Array.isArray(rawBrands)) {
+        where.brandId = { [Op.in]: rawBrands };
+      } else {
+        where.brandId = rawBrands;
+      }
+    }
+
+    // Price range filters
+    const finalMinPrice = parseInt(priceMin || minPrice);
+    const finalMaxPrice = parseInt(priceMax || maxPrice);
+    if (!isNaN(finalMinPrice) || !isNaN(finalMaxPrice)) {
+      where.price = {};
+      if (!isNaN(finalMinPrice)) where.price[Op.gte] = finalMinPrice;
+      if (!isNaN(finalMaxPrice)) where.price[Op.lte] = finalMaxPrice;
+    }
+
+    // Search query
+    const finalSearch = search || q;
+    if (finalSearch) {
+      where[Op.or] = [
+        { name: { [Op.like]: `%${finalSearch}%` } },
+        { description: { [Op.like]: `%${finalSearch}%` } },
+      ];
+    }
+
+    // Sort order
     let order;
     switch (sort) {
-      case 'price_asc': order = [['price', 'ASC']]; break;
-      case 'price_desc': order = [['price', 'DESC']]; break;
-      default: order = [['createdAt', 'DESC']];
+      case 'price_asc':
+      case 'price:ASC':
+        order = [['price', 'ASC']];
+        break;
+      case 'price_desc':
+      case 'price:DESC':
+        order = [['price', 'DESC']];
+        break;
+      case 'best_selling':
+        order = [['id', 'DESC']];
+        break;
+      case 'oldest':
+        order = [['createdAt', 'ASC']];
+        break;
+      case 'createdAt:DESC':
+      default:
+        order = [['createdAt', 'DESC']];
+        break;
     }
 
     const { count, rows } = await Product.findAndCountAll({
-      where: { isActive: true, categoryId: { [Op.in]: categoryIds } },
+      where,
       include: [
         { model: ProductImage, as: 'images', attributes: ['id', 'imageUrl', 'isPrimary'] },
         { model: Category, attributes: ['id', 'name', 'slug'] },

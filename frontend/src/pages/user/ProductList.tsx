@@ -54,8 +54,6 @@ const ProductList: React.FC = () => {
       let url = '/products';
       if (slug) {
         url = `/products/category/${slug}`;
-      } else if (searchQuery) {
-        url = `/products/search?q=${encodeURIComponent(searchQuery)}`;
       }
 
       const params = new URLSearchParams({
@@ -64,13 +62,16 @@ const ProductList: React.FC = () => {
         sort,
       });
 
+      if (searchQuery) {
+        params.append('search', searchQuery);
+      }
       if (selectedBrands.length > 0) {
         params.append('brands', selectedBrands.join(','));
       }
       params.append('minPrice', priceRange.min.toString());
       params.append('maxPrice', priceRange.max.toString());
 
-      const finalUrl = `${url}${url.includes('?') ? '&' : '?'}${params.toString()}`;
+      const finalUrl = `${url}?${params.toString()}`;
       
       const { data } = await api.get<PaginatedResponse<Product>>(finalUrl);
       if (data.success) {

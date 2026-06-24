@@ -7,6 +7,7 @@ import api from '../../services/api';
 import { formatPrice } from '../../utils/formatPrice';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import Modal from '../../components/Modal';
 
 const Checkout: React.FC = () => {
   const { user } = useAuth();
@@ -22,6 +23,8 @@ const Checkout: React.FC = () => {
     paymentMethod: 'cod',
   });
   const [submitting, setSubmitting] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
@@ -77,13 +80,23 @@ const Checkout: React.FC = () => {
       if (data.success) {
         toast('Đặt hàng thành công!', 'success');
         clearCart();
-        navigate('/orders');
+        if (formData.paymentMethod === 'cod') {
+          navigate('/orders');
+        } else {
+          setCreatedOrder(data.data);
+          setShowPaymentModal(true);
+        }
       }
     } catch (error: any) {
       toast(error.response?.data?.message || 'Lỗi khi đặt hàng', 'error');
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast(`Đã sao chép ${label}!`, 'success');
   };
 
   return (
@@ -303,6 +316,133 @@ const Checkout: React.FC = () => {
           </Button>
         </div>
       </form>
+
+      {/* Payment Modal */}
+      <Modal
+        isOpen={showPaymentModal}
+        onClose={() => {
+          setShowPaymentModal(false);
+          navigate('/orders');
+        }}
+        title="Thanh toán đơn hàng"
+        footer={
+          <div className="flex gap-sm justify-end w-full" style={{ width: '100%' }}>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setShowPaymentModal(false);
+                navigate('/orders');
+              }}
+            >
+              Xem đơn hàng
+            </Button>
+            <Button
+              onClick={() => {
+                toast('Yêu cầu thanh toán của bạn đang được hệ thống xác nhận!', 'success');
+                setShowPaymentModal(false);
+                navigate('/orders');
+              }}
+            >
+              Tôi đã chuyển khoản
+            </Button>
+          </div>
+        }
+      >
+        {createdOrder && (
+          <div className="text-center p-sm">
+            <div className="text-success font-bold text-lg mb-sm">🎉 Đặt hàng thành công!</div>
+            <p className="text-sm text-muted mb-md">
+              Đơn hàng <strong>#{createdOrder.id}</strong> đã được khởi tạo. Vui lòng quét mã QR bên dưới để hoàn tất thanh toán.
+            </p>
+
+            {/* QR Code Container */}
+            <div 
+              className="flex flex-col items-center justify-center p-md mb-md border-radius-lg"
+              style={{ 
+                background: 'var(--bg-secondary, #f8f9fa)', 
+                border: '1px solid var(--border-color)',
+                maxWidth: '320px',
+                margin: '0 auto 1.5rem auto'
+              }}
+            >
+              <img 
+                src={`https://img.vietqr.io/image/MB-0986552233-compact.png?amount=${createdOrder.totalAmount}&addInfo=LG${createdOrder.id}&accountName=LIGHTNING%20GEAR`}
+                alt="Mã QR thanh toán VietQR"
+                style={{ width: '240px', height: '240px', objectFit: 'contain', borderRadius: '8px' }}
+              />
+              <span className="text-xs text-muted mt-sm" style={{ marginTop: '8px', display: 'block' }}>
+                Quét bằng ứng dụng Ngân hàng hoặc Ví điện tử (MoMo, ZaloPay, VNPay...)
+              </span>
+            </div>
+
+            {/* Payment Details */}
+            <div 
+              className="text-left text-sm p-md border-radius-md flex flex-col gap-xs mb-md"
+              style={{ 
+                background: 'var(--bg-primary, #ffffff)', 
+                border: '1px dashed var(--accent-primary)', 
+                fontSize: '0.9rem',
+                padding: '12px',
+                borderRadius: '8px'
+              }}
+            >
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Ngân hàng:</span>
+                <span className="font-bold">MB Bank</span>
+              </div>
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Số tài khoản:</span>
+                <div className="flex items-center gap-xs">
+                  <span className="font-bold font-mono">0986552233</span>
+                  <button 
+                    type="button"
+                    className="btn btn-ghost btn-xs text-accent" 
+                    onClick={() => copyToClipboard('0986552233', 'số tài khoản')}
+                    style={{ padding: '2px 6px', fontSize: '0.75rem', minHeight: 'auto', border: '1px solid var(--accent-primary)', borderRadius: '4px', background: 'transparent' }}
+                  >
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Chủ tài khoản:</span>
+                <span className="font-bold">LIGHTNING GEAR</span>
+              </div>
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Số tiền:</span>
+                <div className="flex items-center gap-xs">
+                  <span className="font-bold text-accent">{formatPrice(createdOrder.totalAmount)}</span>
+                  <button 
+                    type="button"
+                    className="btn btn-ghost btn-xs text-accent" 
+                    onClick={() => copyToClipboard(String(createdOrder.totalAmount), 'số tiền')}
+                    style={{ padding: '2px 6px', fontSize: '0.75rem', minHeight: 'auto', border: '1px solid var(--accent-primary)', borderRadius: '4px', background: 'transparent' }}
+                  >
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-center py-xs" style={{ paddingTop: '6px' }}>
+                <span className="text-muted">Nội dung:</span>
+                <div className="flex items-center gap-xs">
+                  <span className="font-bold font-mono text-accent">LG{createdOrder.id}</span>
+                  <button 
+                    type="button"
+                    className="btn btn-ghost btn-xs text-accent" 
+                    onClick={() => copyToClipboard(`LG${createdOrder.id}`, 'nội dung chuyển khoản')}
+                    style={{ padding: '2px 6px', fontSize: '0.75rem', minHeight: 'auto', border: '1px solid var(--accent-primary)', borderRadius: '4px', background: 'transparent' }}
+                  >
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted italic text-center" style={{ fontSize: '0.75rem' }}>
+              * Vui lòng điền chính xác nội dung chuyển khoản để hệ thống xác nhận thanh toán tự động nhanh nhất.
+            </p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

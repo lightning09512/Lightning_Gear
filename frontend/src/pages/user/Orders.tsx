@@ -7,12 +7,35 @@ import { formatDate } from '../../utils/formatDate';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import Pagination from '../../components/Pagination';
 import { useSocket } from '../../hooks/useSocket';
+import Modal from '../../components/Modal';
+import { useToast } from '../../components/Toast';
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1 });
   const { socket } = useSocket();
+  const { toast } = useToast();
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+
+  const getPaymentMethodLabel = (method: string) => {
+    const map: Record<string, string> = {
+      cod: 'COD',
+      bank_transfer: 'Chuyển khoản',
+      momo: 'MoMo',
+      zalopay: 'ZaloPay',
+      vnpay: 'VNPay',
+      credit_card: 'Thẻ tín dụng',
+      installment: 'Trả góp',
+    };
+    return map[method] || method;
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast(`Đã sao chép ${label}!`, 'success');
+  };
 
   useEffect(() => {
     fetchOrders(1);
@@ -109,9 +132,23 @@ const Orders: React.FC = () => {
               </div>
 
               <div className="p-md bg-surface border-top flex justify-between items-center" style={{ borderColor: 'var(--border-color)' }}>
-                <div className="text-sm">
-                  <span className="text-muted">Phương thức thanh toán: </span>
-                  <span className="font-bold text-uppercase">{order.paymentMethod === 'cod' ? 'COD' : 'Chuyển khoản'}</span>
+                <div className="text-sm flex items-center gap-sm" style={{ flexWrap: 'wrap' }}>
+                  <div>
+                    <span className="text-muted">Phương thức thanh toán: </span>
+                    <span className="font-bold text-uppercase">{getPaymentMethodLabel(order.paymentMethod)}</span>
+                  </div>
+                  {order.status === 'pending' && order.paymentMethod !== 'cod' && (
+                    <button 
+                      className="btn btn-primary btn-sm flex items-center gap-xs"
+                      onClick={() => {
+                        setSelectedOrder(order);
+                        setShowPaymentModal(true);
+                      }}
+                      style={{ padding: '4px 10px', fontSize: '0.8rem', minHeight: 'auto' }}
+                    >
+                      💳 Thanh toán QR
+                    </button>
+                  )}
                 </div>
                 <div>
                   <span className="text-muted mr-sm">Tổng tiền:</span>
@@ -128,6 +165,133 @@ const Orders: React.FC = () => {
           />
         </div>
       )}
+
+      {/* Payment Modal */}
+      <Modal
+        isOpen={showPaymentModal}
+        onClose={() => {
+          setShowPaymentModal(false);
+          setSelectedOrder(null);
+        }}
+        title="Thanh toán đơn hàng"
+        footer={
+          <div className="flex gap-sm justify-end w-full" style={{ width: '100%' }}>
+            <button
+              className="btn btn-secondary"
+              onClick={() => {
+                setShowPaymentModal(false);
+                setSelectedOrder(null);
+              }}
+            >
+              Đóng
+            </button>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                toast('Yêu cầu thanh toán của bạn đang được hệ thống xác nhận!', 'success');
+                setShowPaymentModal(false);
+                setSelectedOrder(null);
+              }}
+            >
+              Tôi đã chuyển khoản
+            </button>
+          </div>
+        }
+      >
+        {selectedOrder && (
+          <div className="text-center p-sm">
+            <p className="text-sm text-muted mb-md">
+              Đơn hàng <strong>#{selectedOrder.id}</strong> đang chờ thanh toán. Vui lòng quét mã QR bên dưới để hoàn tất thanh toán.
+            </p>
+
+            {/* QR Code Container */}
+            <div 
+              className="flex flex-col items-center justify-center p-md mb-md border-radius-lg"
+              style={{ 
+                background: 'var(--bg-secondary, #f8f9fa)', 
+                border: '1px solid var(--border-color)',
+                maxWidth: '320px',
+                margin: '0 auto 1.5rem auto'
+              }}
+            >
+              <img 
+                src={`https://img.vietqr.io/image/MB-0986552233-compact.png?amount=${selectedOrder.totalAmount}&addInfo=LG${selectedOrder.id}&accountName=LIGHTNING%20GEAR`}
+                alt="Mã QR thanh toán VietQR"
+                style={{ width: '240px', height: '240px', objectFit: 'contain', borderRadius: '8px' }}
+              />
+              <span className="text-xs text-muted mt-sm" style={{ marginTop: '8px', display: 'block' }}>
+                Quét bằng ứng dụng Ngân hàng hoặc Ví điện tử (MoMo, ZaloPay, VNPay...)
+              </span>
+            </div>
+
+            {/* Payment Details */}
+            <div 
+              className="text-left text-sm p-md border-radius-md flex flex-col gap-xs mb-md"
+              style={{ 
+                background: 'var(--bg-primary, #ffffff)', 
+                border: '1px dashed var(--accent-primary)', 
+                fontSize: '0.9rem',
+                padding: '12px',
+                borderRadius: '8px'
+              }}
+            >
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Ngân hàng:</span>
+                <span className="font-bold">MB Bank</span>
+              </div>
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Số tài khoản:</span>
+                <div className="flex items-center gap-xs">
+                  <span className="font-bold font-mono">0986552233</span>
+                  <button 
+                    type="button"
+                    className="btn btn-ghost btn-xs text-accent" 
+                    onClick={() => copyToClipboard('0986552233', 'số tài khoản')}
+                    style={{ padding: '2px 6px', fontSize: '0.75rem', minHeight: 'auto', border: '1px solid var(--accent-primary)', borderRadius: '4px', background: 'transparent' }}
+                  >
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Chủ tài khoản:</span>
+                <span className="font-bold">LIGHTNING GEAR</span>
+              </div>
+              <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
+                <span className="text-muted">Số tiền:</span>
+                <div className="flex items-center gap-xs">
+                  <span className="font-bold text-accent">{formatPrice(selectedOrder.totalAmount)}</span>
+                  <button 
+                    type="button"
+                    className="btn btn-ghost btn-xs text-accent" 
+                    onClick={() => copyToClipboard(String(selectedOrder.totalAmount), 'số tiền')}
+                    style={{ padding: '2px 6px', fontSize: '0.75rem', minHeight: 'auto', border: '1px solid var(--accent-primary)', borderRadius: '4px', background: 'transparent' }}
+                  >
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-center py-xs" style={{ paddingTop: '6px' }}>
+                <span className="text-muted">Nội dung:</span>
+                <div className="flex items-center gap-xs">
+                  <span className="font-bold font-mono text-accent">LG{selectedOrder.id}</span>
+                  <button 
+                    type="button"
+                    className="btn btn-ghost btn-xs text-accent" 
+                    onClick={() => copyToClipboard(`LG${selectedOrder.id}`, 'nội dung chuyển khoản')}
+                    style={{ padding: '2px 6px', fontSize: '0.75rem', minHeight: 'auto', border: '1px solid var(--accent-primary)', borderRadius: '4px', background: 'transparent' }}
+                  >
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted italic text-center" style={{ fontSize: '0.75rem' }}>
+              * Vui lòng điền chính xác nội dung chuyển khoản để hệ thống xác nhận thanh toán tự động nhanh nhất.
+            </p>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

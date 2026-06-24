@@ -905,14 +905,14 @@ tr:hover td {
   top: 100%;
   left: 0;
   width: 260px;
-  background: #fff;
+  background: var(--bg-card, #fff);
   border: 1px solid var(--border-color);
   border-top: none;
   box-shadow: var(--shadow-md);
   opacity: 0;
   visibility: hidden;
   transition: all var(--transition-fast);
-  z-index: 100;
+  z-index: 9999;
 }
 
 .category-dropdown.show {
