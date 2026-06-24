@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MdSearch } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
-import { Product } from '../../types';
-import { debounce } from '../../utils/debounce';
-import { formatPrice } from '../../utils/formatPrice';
+import api from '../services/api';
+import { Product } from '../types';
+import { debounce } from '../utils/debounce';
+import { formatPrice } from '../utils/formatPrice';
 
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useState('');

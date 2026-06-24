@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { MdShoppingCart, MdPerson, MdLogout, MdDashboard, MdListAlt } from 'react-icons/md';
 import { useAuth } from '../../context/AuthContext';
@@ -11,6 +11,17 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const cartCount = user ? items.reduce((acc, item) => acc + item.quantity, 0) : localItems.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -56,11 +67,10 @@ const Header: React.FC = () => {
             {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
           </button>
 
-          <div className="user-menu" onMouseLeave={() => setIsMenuOpen(false)}>
+          <div className="user-menu" ref={menuRef}>
             <div 
               className="user-menu-trigger"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              onMouseEnter={() => setIsMenuOpen(true)}
             >
               <MdPerson size={20} />
               <span className="text-sm font-bold hide-mobile">

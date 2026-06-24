@@ -23,7 +23,7 @@ async function startServer() {
     console.log('✅ Database connection established successfully.');
 
     // Sync models (use { alter: true } in dev for auto-migration)
-    await sequelize.sync({ alter: process.env.NODE_ENV === 'development' });
+    await sequelize.sync({ alter: false });
     console.log('✅ Database models synced.');
 
     // Start listening

@@ -90,7 +90,7 @@ const Orders: React.FC = () => {
                 {order.items.map(item => {
                   const primaryImage = item.Product?.images?.[0]?.imageUrl || 'https://placehold.co/100x100';
                   return (
-                    <div key={item.id} className="flex gap-md mb-md pb-md border-bottom" style={{ borderColor: 'var(--border-color)', lastChild: { borderBottom: 'none', marginBottom: 0, paddingBottom: 0 } }}>
+                    <div key={item.id} className="flex gap-md mb-md pb-md border-bottom" style={{ borderColor: 'var(--border-color)' }}>
                       <Link to={`/products/${item.Product?.slug}`}>
                         <img src={primaryImage} alt={item.Product?.name} style={{ width: 80, height: 80, objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} />
                       </Link>
