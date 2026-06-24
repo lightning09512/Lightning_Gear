@@ -28,7 +28,7 @@ async function startServer() {
 
     // Start listening
     server.listen(PORT, () => {
-      console.log(`⚡ Lightning Gear API running on http://localhost:${PORT}`);
+      console.log(`⚡ NK Gear API running on http://localhost:${PORT}`);
       console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
   } catch (error) {

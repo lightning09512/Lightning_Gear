@@ -305,7 +305,7 @@ const Checkout: React.FC = () => {
                 <div className="font-bold text-accent mb-xs">Thông tin tài khoản ngân hàng:</div>
                 <div>Ngân hàng: <strong>MB Bank (Ngân hàng Quân Đội)</strong></div>
                 <div>Số tài khoản: <strong>0986552233</strong></div>
-                <div>Chủ tài khoản: <strong>LIGHTNING GEAR</strong></div>
+                <div>Chủ tài khoản: <strong>NK GEAR</strong></div>
                 <div>Nội dung chuyển khoản: <strong>LG [Mã đơn hàng]</strong></div>
                 <div className="text-xs text-muted mt-sm">* Đơn hàng sẽ được xử lý ngay sau khi hệ thống nhận được chuyển khoản thành công.</div>
               </div>
@@ -428,7 +428,7 @@ const Checkout: React.FC = () => {
                 }}
               >
                 <img 
-                  src={`https://img.vietqr.io/image/MB-0986552233-compact.png?amount=${createdOrder.totalAmount}&addInfo=LG${createdOrder.id}&accountName=LIGHTNING%20GEAR`}
+                  src={`https://img.vietqr.io/image/MB-0986552233-compact.png?amount=${createdOrder.totalAmount}&addInfo=LG${createdOrder.id}&accountName=NK%20GEAR`}
                   alt={`Mã QR thanh toán ${paymentInfo.title}`}
                   style={{ width: '240px', height: '240px', objectFit: 'contain', borderRadius: '8px' }}
                 />
@@ -468,7 +468,7 @@ const Checkout: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
                   <span className="text-muted">Chủ tài khoản:</span>
-                  <span className="font-bold">LIGHTNING GEAR</span>
+                  <span className="font-bold">NK GEAR</span>
                 </div>
                 <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
                   <span className="text-muted">Số tiền:</span>

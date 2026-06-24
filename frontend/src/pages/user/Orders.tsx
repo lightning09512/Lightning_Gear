@@ -277,7 +277,7 @@ const Orders: React.FC = () => {
                 }}
               >
                 <img 
-                  src={`https://img.vietqr.io/image/MB-0986552233-compact.png?amount=${selectedOrder.totalAmount}&addInfo=LG${selectedOrder.id}&accountName=LIGHTNING%20GEAR`}
+                  src={`https://img.vietqr.io/image/MB-0986552233-compact.png?amount=${selectedOrder.totalAmount}&addInfo=LG${selectedOrder.id}&accountName=NK%20GEAR`}
                   alt={`Mã QR thanh toán ${paymentInfo.title}`}
                   style={{ width: '240px', height: '240px', objectFit: 'contain', borderRadius: '8px' }}
                 />
@@ -317,7 +317,7 @@ const Orders: React.FC = () => {
                 </div>
                 <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
                   <span className="text-muted">Chủ tài khoản:</span>
-                  <span className="font-bold">LIGHTNING GEAR</span>
+                  <span className="font-bold">NK GEAR</span>
                 </div>
                 <div className="flex justify-between items-center py-xs border-bottom" style={{ borderColor: 'var(--border-color)', paddingBottom: '6px', paddingTop: '6px' }}>
                   <span className="text-muted">Số tiền:</span>

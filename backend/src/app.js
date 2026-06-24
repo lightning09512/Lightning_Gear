@@ -53,7 +53,7 @@ app.use('/api/admin/users', adminUserRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ success: true, message: 'Lightning Gear API is running ⚡' });
+  res.json({ success: true, message: 'NK Gear API is running ⚡' });
 });
 
 // 404 handler

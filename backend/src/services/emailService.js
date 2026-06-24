@@ -2,13 +2,13 @@ const transporter = require('../config/mailer');
 require('dotenv').config();
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
-const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@lightninggear.com';
+const EMAIL_FROM = process.env.EMAIL_FROM || 'noreply@nkgear.com';
 
-// Common email header with Lightning Gear branding
+// Common email header with NK Gear branding
 const emailHeader = `
   <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
     <h1 style="color: #00d4ff; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; font-size: 28px;">
-      ⚡ Lightning Gear
+      ⚡ NK Gear
     </h1>
     <p style="color: #8892b0; margin: 5px 0 0; font-size: 14px;">PC & Gaming Components</p>
   </div>
@@ -17,7 +17,7 @@ const emailHeader = `
 const emailFooter = `
   <div style="background: #0a0a1a; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
     <p style="color: #666; font-size: 12px; margin: 0;">
-      © ${new Date().getFullYear()} Lightning Gear. All rights reserved.<br>
+      © ${new Date().getFullYear()} NK Gear. All rights reserved.<br>
       Email này được gửi tự động, vui lòng không trả lời.
     </p>
   </div>
@@ -43,7 +43,7 @@ async function sendVerificationEmail(user, token) {
   const html = wrapEmailBody(`
     <h2 style="color: #00d4ff; margin-top: 0;">Xác nhận tài khoản</h2>
     <p>Xin chào <strong>${user.username}</strong>,</p>
-    <p>Cảm ơn bạn đã đăng ký tài khoản tại Lightning Gear. Vui lòng nhấn nút bên dưới để xác nhận email của bạn:</p>
+    <p>Cảm ơn bạn đã đăng ký tài khoản tại NK Gear. Vui lòng nhấn nút bên dưới để xác nhận email của bạn:</p>
     <div style="text-align: center; margin: 30px 0;">
       <a href="${verifyUrl}" style="background: linear-gradient(135deg, #00d4ff, #7b2ff7); color: white; padding: 14px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; display: inline-block;">
         Xác nhận Email
@@ -54,9 +54,9 @@ async function sendVerificationEmail(user, token) {
   `);
 
   await transporter.sendMail({
-    from: `"Lightning Gear" <${EMAIL_FROM}>`,
+    from: `"NK Gear" <${EMAIL_FROM}>`,
     to: user.email,
-    subject: 'Lightning Gear — Xác nhận tài khoản của bạn',
+    subject: 'NK Gear — Xác nhận tài khoản của bạn',
     html,
   });
 }
@@ -80,9 +80,9 @@ async function sendResetPasswordEmail(user, token) {
   `);
 
   await transporter.sendMail({
-    from: `"Lightning Gear" <${EMAIL_FROM}>`,
+    from: `"NK Gear" <${EMAIL_FROM}>`,
     to: user.email,
-    subject: 'Lightning Gear — Đặt lại mật khẩu',
+    subject: 'NK Gear — Đặt lại mật khẩu',
     html,
   });
 }
@@ -143,9 +143,9 @@ async function sendOrderConfirmationEmail(user, order, items) {
   `);
 
   await transporter.sendMail({
-    from: `"Lightning Gear" <${EMAIL_FROM}>`,
+    from: `"NK Gear" <${EMAIL_FROM}>`,
     to: user.email,
-    subject: `Lightning Gear — Xác nhận đơn hàng #LG-${order.id}`,
+    subject: `NK Gear — Xác nhận đơn hàng #LG-${order.id}`,
     html,
   });
 }
@@ -176,9 +176,9 @@ async function sendOrderStatusEmail(user, order) {
   `);
 
   await transporter.sendMail({
-    from: `"Lightning Gear" <${EMAIL_FROM}>`,
+    from: `"NK Gear" <${EMAIL_FROM}>`,
     to: user.email,
-    subject: `Lightning Gear — Đơn hàng #LG-${order.id} ${statusInfo.text}`,
+    subject: `NK Gear — Đơn hàng #LG-${order.id} ${statusInfo.text}`,
     html,
   });
 }

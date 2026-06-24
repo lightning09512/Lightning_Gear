@@ -87,7 +87,7 @@ const Header: React.FC = () => {
           <div className="header-middle-inner">
             <Link to="/" className="logo">
               <span className="bolt">⚡</span>
-              <span>Lightning Gear</span>
+              <span>NK Gear</span>
             </Link>
 
             <form className="search-bar" onSubmit={handleSearch}>

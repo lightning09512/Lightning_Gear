@@ -47,15 +47,15 @@ const Footer: React.FC = () => {
             <div className="footer-brand">
               <Link to="/" className="logo" style={{ color: '#fff' }}>
                 <span className="bolt">⚡</span>
-                <span>Lightning Gear</span>
+                <span>NK Gear</span>
               </Link>
               <p style={{ marginTop: '16px' }}>
-                Lightning Gear - Điểm đến tin cậy cho những tín đồ công nghệ, chuyên cung cấp PC Gaming, Laptop, linh kiện và phụ kiện máy tính chính hãng với giá tốt nhất thị trường.
+                NK Gear - Điểm đến tin cậy cho những tín đồ công nghệ, chuyên cung cấp PC Gaming, Laptop, linh kiện và phụ kiện máy tính chính hãng với giá tốt nhất thị trường.
               </p>
               <div className="contact-info mt-lg">
                 <p><MdLocationOn /> 123 Đường Công Nghệ, Quận 1, TP.HCM</p>
                 <p><MdPhone /> 098.655.2233</p>
-                <p><MdEmail /> support@lightninggear.com</p>
+                <p><MdEmail /> support@nkgear.com</p>
               </div>
             </div>
 
@@ -96,7 +96,7 @@ const Footer: React.FC = () => {
       
       <div className="footer-bottom">
         <div className="container">
-          <p>&copy; {new Date().getFullYear()} Lightning Gear. All rights reserved. Designed for TTG Shop Style.</p>
+          <p>&copy; {new Date().getFullYear()} NK Gear. All rights reserved. Designed for TTG Shop Style.</p>
         </div>
       </div>
     </footer>

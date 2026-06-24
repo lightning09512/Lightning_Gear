@@ -48,8 +48,8 @@ const Login: React.FC = () => {
     <div className="auth-page">
       <div className="auth-card">
         <div className="logo">
-          <span className="bolt">⚡</span>
-          <span>Lightning Gear</span>
+           <span className="bolt">⚡</span>
+           <span>NK Gear</span>
         </div>
         <h2>Đăng nhập</h2>
         
