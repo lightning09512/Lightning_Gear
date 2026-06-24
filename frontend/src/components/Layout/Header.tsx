@@ -85,8 +85,8 @@ const Header: React.FC = () => {
       <div className="header-middle">
         <div className="container">
           <div className="header-middle-inner">
-            <Link to="/" className="logo">
-              <span className="bolt">⚡</span>
+            <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <img src="/favicon.svg" alt="NK Gear Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
               <span>NK Gear</span>
             </Link>
 

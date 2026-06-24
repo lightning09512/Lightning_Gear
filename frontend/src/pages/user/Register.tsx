@@ -57,8 +57,8 @@ const Register: React.FC = () => {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <div className="logo">
-           <span className="bolt">⚡</span>
+        <div className="logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+           <img src="/favicon.svg" alt="NK Gear Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
            <span>NK Gear</span>
         </div>
         <h2>Tạo tài khoản mới</h2>

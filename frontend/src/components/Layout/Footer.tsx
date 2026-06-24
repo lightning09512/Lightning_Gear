@@ -45,8 +45,8 @@ const Footer: React.FC = () => {
         <div className="container">
           <div className="footer-grid">
             <div className="footer-brand">
-              <Link to="/" className="logo" style={{ color: '#fff' }}>
-                <span className="bolt">⚡</span>
+              <Link to="/" className="logo" style={{ color: '#fff', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <img src="/favicon.svg" alt="NK Gear Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
                 <span>NK Gear</span>
               </Link>
               <p style={{ marginTop: '16px' }}>
