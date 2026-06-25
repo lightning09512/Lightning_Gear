@@ -7,6 +7,7 @@ import { Product } from '../../types';
 import { formatPrice } from '../../utils/formatPrice';
 import Button from '../../components/Button';
 import { MdDeleteOutline, MdShoppingCart } from 'react-icons/md';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const Cart: React.FC = () => {
   const { items, localItems, updateQuantity, removeFromCart } = useCart();
@@ -98,7 +99,7 @@ const Cart: React.FC = () => {
             
             const itemId = getItemId(item);
             const price = product.salePrice || product.price;
-            const primaryImage = product.images?.[0]?.imageUrl || 'https://placehold.co/100x100';
+            const primaryImage = getImageUrl(product.images?.[0]?.imageUrl);
 
             return (
               <div key={itemId} className="cart-item">

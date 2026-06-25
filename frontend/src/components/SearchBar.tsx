@@ -5,6 +5,7 @@ import api from '../services/api';
 import { Product } from '../types';
 import { debounce } from '../utils/debounce';
 import { formatPrice } from '../utils/formatPrice';
+import { getImageUrl } from '../utils/imageUrl';
 
 const SearchBar: React.FC = () => {
   const [query, setQuery] = useState('');
@@ -85,7 +86,7 @@ const SearchBar: React.FC = () => {
       {isOpen && results.length > 0 && (
         <div className="search-results">
           {results.map(product => {
-            const primaryImage = product.images?.[0]?.imageUrl || 'https://placehold.co/100x100/1a1a2e/00d4ff?text=No+Image';
+            const primaryImage = getImageUrl(product.images?.[0]?.imageUrl);
             return (
               <div 
                 key={product.id} 

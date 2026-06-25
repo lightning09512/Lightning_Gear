@@ -9,6 +9,7 @@ import Pagination from '../../components/Pagination';
 import { useSocket } from '../../hooks/useSocket';
 import Modal from '../../components/Modal';
 import { useToast } from '../../components/Toast';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const Orders: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -153,7 +154,7 @@ const Orders: React.FC = () => {
               
               <div className="p-md">
                 {order.items.map(item => {
-                  const primaryImage = item.Product?.images?.[0]?.imageUrl || 'https://placehold.co/100x100';
+                  const primaryImage = getImageUrl(item.Product?.images?.[0]?.imageUrl);
                   return (
                     <div key={item.id} className="flex gap-md mb-md pb-md border-bottom" style={{ borderColor: 'var(--border-color)' }}>
                       <Link to={`/products/${item.Product?.slug}`}>

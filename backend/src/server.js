@@ -26,6 +26,21 @@ async function startServer() {
     await sequelize.sync({ alter: false });
     console.log('✅ Database models synced.');
 
+    // Auto-seed if database is empty
+    const { Category, User } = require('./models');
+    const categoryCount = await Category.count();
+    if (categoryCount === 0) {
+      console.log('🔄 No categories found. Auto-seeding database...');
+      const seedData = require('./seeders/dataSeeder');
+      await seedData();
+    }
+    const adminCount = await User.count({ where: { role: 'admin' } });
+    if (adminCount === 0) {
+      console.log('🔄 No admin user found. Auto-seeding admin account...');
+      const seedAdmin = require('./seeders/adminSeeder');
+      await seedAdmin();
+    }
+
     // Start listening
     server.listen(PORT, () => {
       console.log(`⚡ NK Gear API running on http://localhost:${PORT}`);

@@ -9,6 +9,7 @@ import Modal from '../../components/Modal';
 import { useToast } from '../../components/Toast';
 import { MdAdd, MdEdit, MdDelete, MdCheck, MdClose } from 'react-icons/md';
 import { MdOutlineAdd, MdOutlineDelete } from 'react-icons/md';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const AdminProducts: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -252,7 +253,7 @@ const AdminProducts: React.FC = () => {
                   </tr>
                 ) : (
                   products.map(product => {
-                    const primaryImage = product.images?.[0]?.imageUrl || 'https://placehold.co/50x50';
+                    const primaryImage = getImageUrl(product.images?.[0]?.imageUrl);
                     return (
                       <tr key={product.id}>
                         <td>{product.id}</td>

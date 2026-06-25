@@ -11,7 +11,10 @@ async function seedAdmin() {
     const existingAdmin = await User.findOne({ where: { email: 'admin@lightninggear.com' } });
     if (existingAdmin) {
       console.log('⚡ Admin account already exists');
-      process.exit(0);
+      if (require.main === module) {
+        process.exit(0);
+      }
+      return;
     }
 
     await User.create({
@@ -26,11 +29,21 @@ async function seedAdmin() {
     console.log('✅ Admin account created successfully');
     console.log('   Email: admin@lightninggear.com');
     console.log('   Password: admin123');
-    process.exit(0);
+    
+    if (require.main === module) {
+      process.exit(0);
+    }
   } catch (error) {
     console.error('❌ Seeder error:', error);
-    process.exit(1);
+    if (require.main === module) {
+      process.exit(1);
+    }
+    throw error;
   }
 }
 
-seedAdmin();
+if (require.main === module) {
+  seedAdmin();
+}
+
+module.exports = seedAdmin;

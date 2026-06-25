@@ -10,14 +10,17 @@ export const useSocket = () => {
 
   useEffect(() => {
     if (!socket) {
-      socket = io(window.location.origin, {
+      const apiURL = import.meta.env.VITE_API_URL || '';
+      const socketURL = apiURL.replace(/\/api$/, '') || window.location.origin;
+      
+      socket = io(socketURL, {
         path: '/socket.io',
         withCredentials: true,
       });
 
       socket.on('connect', () => {
         setIsConnected(true);
-        console.log('Socket connected');
+        console.log('Socket connected to:', socketURL);
       });
 
       socket.on('disconnect', () => {

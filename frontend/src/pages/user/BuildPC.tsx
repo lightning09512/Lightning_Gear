@@ -6,6 +6,7 @@ import api from '../../services/api';
 import { Product } from '../../types';
 import { formatPrice } from '../../utils/formatPrice';
 import { MdAdd, MdRemove, MdDelete, MdPrint, MdShoppingCart, MdReplay, MdSearch, MdClose } from 'react-icons/md';
+import { getImageUrl } from '../../utils/imageUrl';
 
 interface PartSection {
   id: string;
@@ -230,7 +231,7 @@ const BuildPC: React.FC = () => {
                       {selected ? (
                         <div className="flex items-center gap-md">
                           <img 
-                            src={selected.product.images?.[0]?.imageUrl || 'https://placehold.co/80x80/1a1a2e/00d4ff?text=No+Image'} 
+                            src={getImageUrl(selected.product.images?.[0]?.imageUrl)} 
                             alt={selected.product.name}
                             style={{ width: '60px', height: '60px', borderRadius: '4px', objectFit: 'cover' }}
                           />
@@ -374,7 +375,7 @@ const BuildPC: React.FC = () => {
                       style={{ border: '1px solid var(--border-color)', borderRadius: '6px', gap: '16px' }}
                     >
                       <img 
-                        src={prod.images?.[0]?.imageUrl || 'https://placehold.co/80x80/1a1a2e/00d4ff?text=No+Image'} 
+                        src={getImageUrl(prod.images?.[0]?.imageUrl)} 
                         alt={prod.name}
                         style={{ width: '70px', height: '70px', borderRadius: '4px', objectFit: 'cover' }}
                       />

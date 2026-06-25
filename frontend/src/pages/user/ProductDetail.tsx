@@ -4,6 +4,7 @@ import { MdShoppingCart, MdLocalShipping, MdSecurity, MdAssignmentReturn, MdCard
 import api from '../../services/api';
 import { Product } from '../../types';
 import { useCart } from '../../context/CartContext';
+import { getImageUrl } from '../../utils/imageUrl';
 
 const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -53,7 +54,7 @@ const ProductDetail: React.FC = () => {
     );
   }
 
-  const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://placehold.co/600x600?text=No+Image';
+  const primaryImage = getImageUrl(product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);

@@ -3,13 +3,14 @@ import { Product } from '../types';
 import { formatPrice, calcDiscount } from '../utils/formatPrice';
 import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
+import { getImageUrl } from '../utils/imageUrl';
 
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const primaryImage = product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl || 'https://placehold.co/600x400/f5f5f5/999999?text=No+Image';
+  const primaryImage = getImageUrl(product.images?.find(img => img.isPrimary)?.imageUrl || product.images?.[0]?.imageUrl);
   const discount = calcDiscount(product.price, product.salePrice || 0);
 
   return (
